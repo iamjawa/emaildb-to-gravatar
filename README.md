@@ -12,4 +12,4 @@ Database: emails<br>
 Table: addresses<br>
 Columns: ID, address<br>
 
-Thanks to reddit.com/u/akeniscool for some awesome general advice on how to improve this script.
+Thanks to <a href="http://www.reddit.com/u/akeniscool">reddit.com/u/akeniscool</a> for some awesome general advice on how to improve this script.
