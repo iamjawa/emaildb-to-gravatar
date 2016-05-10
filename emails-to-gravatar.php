@@ -1,73 +1,67 @@
 <?php
 
 
-        $serverlocation = ""; // Network Location of the MySQL installation.
-        $username = ""; // Username used for logging into the MySQL server.
-        $password = ""; // Password used for logging into the MySQL server.
-        $databasename = ""; // Name of the database that the email table is stored in.
+$serverlocation = ""; // Network Location of the MySQL installation.
+$username = ""; // Username used for logging into the MySQL server.
+$password = ""; // Password used for logging into the MySQL server.
+$databasename = ""; // Name of the database that the email table is stored in.
 
 
-        $conn = new mysqli($serverlocation, $username, $password, $databasename); // Sets the variable $conn as the credentials needed to login to the database.
+$connector = new mysqli( $serverlocation, $username, $password, $databasename ); // Sets the variable $connector as the credentials needed to login to the database.
 
 
-        if ($conn->connect_error) {
-            die("Connection failed: " . $conn->connect_error); // Shows an error message if the connection to the database fails.
-        } 
+if ( $connector->connect_error ) {
+    die( "Connection failed: " . $connector->connect_error ); // Shows an error message if the connection to the database fails.
+}
 
 
-        $sql = "SELECT ID, address FROM addresses"; // Attempts to select the columns ID and address from the Table addresses in the database.
-        $result = $conn->query($sql); // Sets the variable $result as a query to the database.
+$sql = "SELECT ID, address FROM addresses"; // Attempts to select the columns ID and address from the Table addresses in the database.
+$result = $connector->query( $sql ); // Sets the variable $result as a query to the database.
 
 
-        if ($result->num_rows > 0) { // If Rows exist within the database
+if ( $result->num_rows > 0 ) { // Checks if Rows exist within the table
 
 
-            while($row = $result->fetch_assoc()) { // Fetches Rows from Database
+    while ( $row = $result->fetch_assoc() ) { // Fetches Rows from table
 
 
-                mkdir('/folders/that/sort/images/by/id' . $row["ID"] . '/' , 0777, true); // Creates the necessary directories for the images to be saved in. 
-
-                $rawurl40 = 'http://www.gravatar.com/avatar/' .md5( $row["address"] ). '?s=40&d=404/'; // Builds the raw URL of the Gravatars that will be used to save the images from (40px).
-                $rawurl80 = 'http://www.gravatar.com/avatar/' .md5( $row["address"] ). '?s=80&d=404/'; // Builds the raw URL of the Gravatars that will be used to save the images from (80px).
-                $rawurl190 = 'http://www.gravatar.com/avatar/' .md5( $row["address"] ). '?s=190&d=404/'; // Builds the raw URL of the Gravatars that will be used to save the images from (190px).
-                $rawurl200 = 'http://www.gravatar.com/avatar/' .md5( $row["address"] ). '?s=200&d=404/'; // Builds the raw URL of the Gravatars that will be used to save the images from (200px).
-
-                $htmlimglink = '<img src="http://www.gravatar.com/avatar/' .md5( $row["address"] ). '" width="200px" height="200px">'; // Builds the HTML URL of the Gravatars for the images to be displayed from once they are saved.
+        $imagesizes = array( '40', '80', '190', '200' ); // Array defining the image sizes to be saved in px (e.g 190 in the array represents an 190px * 190px image)
+        $htmlimglink = '<img src="http://secure.gravatar.com/avatar/' .md5( $row["address"] ). '&d=404/">'; // Builds the HTML URL of the Gravatars for the images to be displayed on the final page from once they are saved (Standard 80px).
+        $directory = '/root/to/save/location' . '/' . $row["ID"] . '/'; // Sets the directories for the images to be saved in to the directories created earlier.
 
 
-                echo "ID: " . $row["ID"]. " - Email Hash: " . md5( $row["address"] ). " " . "<br>"; // Displays the ID and Hash of each individual record once the images have been saved.
-                echo "ID: " . $row["ID"]. " - Email: " . $row["address"]. " " . "<br><br>"; // Displays the actual Email address of each indiviidual record once the images have been saved.
-                echo $htmlimglink; // Displays the Gravatars to the page from the HTML URL built on line 25.
-                echo "<br><br>"; // General Styling
-                echo "<hr />"; // General Styling
+        mkdir( '/root/to/save/location/' . $row["ID"] . '/' , 0755, true ); // Creates the necessary directories for the images to be saved in.
 
 
-                $directory = '/root/directory/where/id/folders/are/stored' . '/' . $row["ID"] . '/'; // Sets the directories for the images to be saved in to the directories created earlier.
-
-                $content40 = file_get_contents($rawurl40); // Fetches each Gravatar
-                file_put_contents($directory . $row["address"] . '-40.jpg', $content40); // Saves each Gravatar under the relevant file name and directory. (40px)
-
-                $content80 = file_get_contents($rawurl80); // Fetches each Gravatar
-                file_put_contents($directory . $row["address"] . '-80.jpg', $content80); // Saves each Gravatar under the relevant file name and directory. (80px)
-
-                $content190 = file_get_contents($rawurl190); // Fetches each Gravatar
-                file_put_contents($directory . $row["address"] . '-190.jpg', $content190); // Saves each Gravatar under the relevant file name and directory. (190px)
-
-                $content200 = file_get_contents($rawurl200); // Fetches each Gravatar
-                file_put_contents($directory . $row["address"] . '-200.jpg', $content200); // Saves each Gravatar under the relevant file name and directory. (200px)
-
-
-            }
-
-
-        } 
-
-        else {
-            echo "There are no records in the database for the script to read. It's empty."; // Displays if there are no records in the database.
+        foreach ( $imagesizes as $urlsizes ) { // Begins cycling the array of image sizes
+            $genericurl = 'http://secure.gravatar.com/avatar/' .md5( $row["address"] ). '?s=' . $urlsizes . '&d=404/'; // Builds the URL to get the image for each address from and returns a 404 error if no Gravatar is found.
+            $content = file_get_contents( $genericurl ); // Actually fetches the images from the url built previously
+            file_put_contents( $directory . 'profile_photo-' . $urlsizes . '.jpg', $content ); // Saves the images in their respective directories.
+            shell_exec('find /root/to/save/location/ -empty -type f -delete'); // Finds Empty Files in the root image directory and subdirectories and Removes them (If the email doesn't have a Gravatar set)
+            shell_exec('find /root/to/save/location/ -empty -type d -delete'); // Finds Empty Directories in the root image directory and Removes them (For directories that contain(ed) empty files when emails don't have a Gravatar set)
         }
 
 
-        $conn->close(); // Closes connection to the database once the script has completed.
-        
+        echo "ID: " . $row["ID"]. " - Email Hash: " . md5( $row["address"] ). " " . "<br>"; // Displays the ID and Hash of each individual record once the images have been saved.
+        echo "Email: " . $row["address"]. " " . "<br><br>"; // Displays the actual Email address of each indiviidual record once the images have been saved.
+        echo $htmlimglink; // Displays the Gravatars to the page from the HTML URL built in the variable $htmlimglink.
+        echo "<br /><br />"; // General Styling
+        echo "<hr />"; // General Styling
+
+        $connector->close(); // Closes connection to the database once the script has completed.
+
+
+    }
+
+
+}
+
+else {
+    echo "There are no records in the database for the script to read. It's either empty or the database is not being read correctly."; // Displays if there are no records in the database or they are not being read properly.
+}
+
+
+$connector->close(); // Closes connection to the database once the script has completed.
+
 
 ?>
