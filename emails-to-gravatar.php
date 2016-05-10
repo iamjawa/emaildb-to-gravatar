@@ -1,5 +1,4 @@
-
-8<?php
+<?php
 
 
         $serverlocation = ""; // Network Location of the MySQL installation.
