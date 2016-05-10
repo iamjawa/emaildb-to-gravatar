@@ -6,3 +6,8 @@ simple and flexible. That's when this script was written.
 
 The "cleaner.sh" is designed to be run once all of the images have been saved to clear the root directory of all empty folders and files. I'm working on a solution currently that will mean that the images are not saved at all if they do not exist, rather than being saved as
 empty files.
+
+For reference, this is the MySQL database structure I was using with this project:
+Database: emails
+Table: addresses
+Columns: ID, address
