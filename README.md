@@ -6,7 +6,7 @@ simple and flexible. That's when this script was written.
 
 The "script.php" is the script itself. All you need to provide is the MySQL database and the Emails. I've recently updated the script, meaning that it also cleans up after itself by removing all of the empty directories and files that are created when people have not assigned a Gravatar to their email address, making the script run much more efficiently. 
 
-For reference, this is the MySQL database structure I was using with this project:<br>
+For reference, this is the MySQL database structure I was using with this project:<br><br>
 Database: emails<br>
 Table: addresses<br>
 Columns: ID, address<br>
