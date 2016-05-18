@@ -25,12 +25,10 @@ if ( $result->num_rows > 0 ) { // Checks if Rows exist within the table
     while ( $row = $result->fetch_assoc() ) { // Fetches Rows from table
 
 
-        $imagesizes = array( '40', '80', '190', '200' ); // Array defining the image sizes to be saved in px (e.g 190 in the array represents an 190px * 190px image)
+        $imagesizes = array( '40', '80', '200' ); // Array defining the image sizes to be saved in px (e.g 190 in the array represents an 190px * 190px image)
         $htmlimglink = '<img src="http://secure.gravatar.com/avatar/' .md5( $row["<Email Column>"] ). '&d=404/">'; // Builds the HTML URL of the Gravatars for the images to be displayed on the final page from once they are saved (Standard 80px).
-        $directory = '/root/to/save/location' . '/' . $row["<ID Column>"] . '/'; // Sets the directories for the images to be saved in to the directories created earlier.
-
-
-        mkdir( '/root/to/save/location/' . $row["<ID Column>"] . '/' , 0755, true ); // Creates the necessary directories for the images to be saved in.
+        mkdir( '/root/to/save/location/' . $row["<Email Address Column>"] . '/' , 0755, true ); // Creates the necessary directories for the images to be saved in.
+        $directory = '/root/to/save/location' . '/' . $row["<Email Address Column>"] . '/'; // Sets the directories for the images to be saved in to the directories created earlier.
 
 
         foreach ( $imagesizes as $urlsizes ) { // Begins cycling the array of image sizes
