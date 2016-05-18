@@ -24,10 +24,10 @@ if ( $result->num_rows > 0 ) { // Checks if Rows exist within the table
 
     while ( $row = $result->fetch_assoc() ) { // Fetches Rows from table
 
-
+        mkdir ('/root/to/save/location', 777, true); // Creates the root directory for the image directories to be stored in
+        mkdir( '/root/to/save/location/' . $row["<Email Address Column>"] . '/' , 777, true ); // Creates the necessary directories for the images to be saved in.
         $imagesizes = array( '40', '80', '200' ); // Array defining the image sizes to be saved in px (e.g 190 in the array represents an 190px * 190px image)
         $htmlimglink = '<img src="http://secure.gravatar.com/avatar/' .md5( $row["<Email Column>"] ). '&d=404/">'; // Builds the HTML URL of the Gravatars for the images to be displayed on the final page from once they are saved (Standard 80px).
-        mkdir( '/root/to/save/location/' . $row["<Email Address Column>"] . '/' , 0755, true ); // Creates the necessary directories for the images to be saved in.
         $directory = '/root/to/save/location' . '/' . $row["<Email Address Column>"] . '/'; // Sets the directories for the images to be saved in to the directories created earlier.
 
 
@@ -38,6 +38,8 @@ if ( $result->num_rows > 0 ) { // Checks if Rows exist within the table
             shell_exec('find /root/to/save/location/ -empty -type f -delete'); // Finds Empty Files in the root image directory and subdirectories and Removes them (If the email doesn't have a Gravatar set)
             shell_exec('find /root/to/save/location/ -empty -type d -delete'); // Finds Empty Directories in the root image directory and Removes them (For directories that contain(ed) empty files when emails don't have a Gravatar set)
         }
+
+        shell_exec('chmod -R 0755 ~/root/to/save/location'); // Sets the permissions of the root folder and all of its subdirectories to 755 for added security (Useful for Web Servers for example)
 
 
         echo "ID: " . $row["<ID Column>"]. " - Email Hash: " . md5( $row["<Email Column>"] ). " " . "<br>"; // Displays the ID and Hash of each individual record once the images have been saved.
